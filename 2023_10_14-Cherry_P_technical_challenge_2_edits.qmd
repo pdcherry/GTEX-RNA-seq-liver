@@ -115,10 +115,10 @@ gtex_samples_filtered %>%
 Bulk RNAseq gct files came from: https://www.gtexportal.org/home/downloads/adult-gtex
 
 I'll use read counts because that's what DEseq2's statistical modeling requires. Unzip it first:
-<!-- ```{bash eval = FALSE, include = TRUE} -->
-<!-- # cd .. -->
-<!-- # gunzip *.gz -->
-<!-- ``` -->
+```{bash eval = FALSE, include = TRUE}
+cd ..
+gunzip *.gz
+```
 
 ```{r}
 rna_counts <- read.delim("../bulk-gex_v8_rna-seq_GTEx_Analysis_2017-06-05_v8_RNASeQCv1.1.9_gene_reads.gct",
@@ -499,6 +499,7 @@ Themes on vitamin D, UDP-yl-ation (a means of preparing xenobiotics for excretio
 
 ## Pathway analysis
 with GAGE
+
 ### Prepare GAGE's needed data
 ```{r}
 data(kegg.sets.hs)
@@ -513,7 +514,7 @@ names(foldchanges) = tissue_DE_results_wide$entrez
 head(foldchanges)
 ```
 
-### Run GAGE
+## Run GAGE
 ```{r}
 keggres = gage(foldchanges, gsets = kegg.sets.hs, same.dir = TRUE)
 ```
@@ -533,7 +534,7 @@ as.data.frame(head(keggres$greater, 30)) %>%
 
 Note that the p-values for pathways down-regulated in the liver are less significant than those of pathways up-regulated, likely due to by high dispersion among the comparison tissues.
 
-#### Pathway plots
+### Pathway plots
 ```{r}
 keggrespathways <- data.frame(id = rownames(keggres$less), keggres$less) %>% 
   as_tibble() %>%
@@ -563,22 +564,30 @@ Typically, expression heat maps use the color-blind-unfriendly and unintuitive r
 
 However, here, because I never inverted (multiplied by -1) the log2-fold-change values, green is for increased relative expression, and red is for decreased relative expression.
 
+#### hsa00830 Retinol metabolism
 ![hsa00830 Retinol metabolism](hsa00830.pathview.png)
 
+#### hsa00982 Drug metabolism - cytochrome P450
 ![hsa00982 Drug metabolism - cytochrome P450](hsa00982.pathview.png)
 
+#### hsa00980 Metabolism of xenobiotics by cytochrome P450
 ![hsa00980 Metabolism of xenobiotics by cytochrome P450](hsa00980.pathview.png)
 
+#### hsa00983 Drug metabolism - other enzymes
 ![hsa00983 Drug metabolism - other enzymes](hsa00983.pathview.png)
 
+#### hsa00140 Steroid hormone biosynthesis
 ![hsa00140 Steroid hormone biosynthesis](hsa00140.pathview.png)
 
+#### hsa00983 Drug metabolism - other enzymes
 ![hsa00983 Drug metabolism - other enzymes](hsa00983.pathview.png)
 
+#### hsa04976 Bile secretion
 ![hsa04976 Bile secretion](hsa04976.pathview.png)
 
 The bile secretion graphic is particularly interesting because it depicts spatial regulation across cell types, and those expectations (hypotheses) are upheld by the bulk RNA-seq data from GTEx. Most hepatocyte genes are up-regulated, whereas most cholangiocyte (epithelial cells of the bile duct) genes are not up-regulated. 
 
+#### hsa00860 Porphyrin and chlorophyll metabolism
 ![hsa00860 Porphyrin and chlorophyll metabolism](hsa00860.pathview.png)
 
 Porphyrin metabolism is a curious case: not many of the GO term's genes are up-regulated, and even along a linear pathway, not all the genes in are up-regulated. I am especially surprised to see biliverdin to bilirubin conversion down-regulated relative to the other tissues in this set. Meanwhile, two of bilirubin's downstream steps are up-regulated.
@@ -666,7 +675,7 @@ The GSEA option was unhelpful at sorting TFs by the level of evidence to support
 Still, I'm not impressed by these results. Even with more stringent filtering (log2-fold-change, p-value), I still can't get a list that looks specific to the liver.
 
 ### Run GSEA on TFEA.ChIP
-```{r echo = TRUE, message = FALSE}
+```{r echo = TRUE, message = FALSE, include = FALSE}
 GSEA.result <- GSEA_run(TFEA_table$Genes, TFEA_table$log2FoldChange, chip_index, get.RES = TRUE)
 ```
 
